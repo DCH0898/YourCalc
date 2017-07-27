@@ -1,0 +1,324 @@
+package com.chun.calc;
+
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.AppCompatButton;
+import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.View;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TableLayout;
+import android.widget.TextView;
+
+import java.text.DecimalFormat;
+
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+
+    private EditText unit_price;
+    private EditText share;
+    private EditText value;
+    private EditText valuation;
+    private EditText have_share;
+    private EditText have_value;
+    private EditText increase;
+    private EditText profit;
+    private EditText buy_share;
+    private EditText name;
+    private TableLayout table;
+
+    private AppCompatButton ac1;
+    private AppCompatButton ac2;
+    private AppCompatButton ac3;
+    String kong = "0";
+
+    DecimalFormat df = new DecimalFormat("######0.00");
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        unit_price = (EditText) findViewById(R.id.unit_price);
+        share = (EditText) findViewById(R.id.share);
+        value = (EditText) findViewById(R.id.value);
+        valuation = (EditText) findViewById(R.id.valuation);
+        have_share = (EditText) findViewById(R.id.have_share);
+        have_value = (EditText) findViewById(R.id.have_value);
+        increase = (EditText) findViewById(R.id.increase);
+        profit = (EditText) findViewById(R.id.profit);
+        buy_share = (EditText) findViewById(R.id.buy_share);
+        name = (EditText) findViewById(R.id.name);
+        table = (TableLayout) findViewById(R.id.table);
+        ac1 = (AppCompatButton) findViewById(R.id.ac1);
+        ac2 = (AppCompatButton) findViewById(R.id.ac2);
+        ac3 = (AppCompatButton) findViewById(R.id.ac3);
+
+        unit_price.addTextChangedListener(firstWatcher);
+        share.addTextChangedListener(firstWatcher);
+        valuation.addTextChangedListener(valuationWatcher);
+        have_share.addTextChangedListener(valuationWatcher);
+//        new_value.addTextChangedListener(newValueWatcher);
+        buy_share.addTextChangedListener(colorWatcher);
+        ac1.setOnClickListener(this);
+        ac2.setOnClickListener(this);
+        ac3.setOnClickListener(this);
+//        TextView tv = new TextView(this);
+//        tv.setText("Hello World");
+//        table.addView(tv);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+
+    TextWatcher firstWatcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            if (unit_price.getText().length() > 0 && share.getText().length() > 0) {
+                double number = Double.parseDouble(unit_price.getText().toString());
+                double share_ = Double.parseDouble(share.getText().toString());
+                value.setText(df.format(getValue(number, share_)));
+                have_share.setText(share.getText());
+            }
+            if (valuation.getText().length() > 0
+                    && unit_price.getText().length() > 0
+                    && !unit_price.getText().toString().equals("0")) {
+                double valuation_ = Double.parseDouble(valuation.getText().toString());
+                double unit_price_ = Double.parseDouble(unit_price.getText().toString());
+                increase.setText(df.format(getIncrease(valuation_, unit_price_)) + "%");// 涨跌幅
+            }
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+
+        }
+    };
+    TextWatcher valuationWatcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            if (valuation.getText().length() > 0
+                    && value.getText().length() > 0
+                    && have_share.getText().length() > 0
+                    && !valuation.getText().toString().equals("0")) {
+                double valuation_ = Double.parseDouble(valuation.getText().toString());
+                double value_ = Double.parseDouble(value.getText().toString());
+                double have_share_ = Double.parseDouble(have_share.getText().toString());
+                have_value.setText(df.format(getHaveValue(valuation_, have_share_)));// 现有市值
+                profit.setText(
+                        df.format(
+                                getProfit(
+                                        Double.parseDouble(
+                                                have_value.getText().toString()), value_)));// 盈亏额
+                buy_share.setText(df.format(getBayShare(getHaveValue(valuation_, have_share_), value_, valuation_)));// 买卖份额
+            }
+            if (valuation.getText().length() > 0
+                    && unit_price.getText().length() > 0
+                    && !unit_price.getText().toString().equals("0")) {
+                double valuation_ = Double.parseDouble(valuation.getText().toString());
+                double unit_price_ = Double.parseDouble(unit_price.getText().toString());
+                increase.setText(df.format(getIncrease(valuation_, unit_price_)) + "%");// 涨跌幅
+            }
+
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+
+        }
+    };
+    TextWatcher newValueWatcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            if (valuation.getText().length() > 0
+                    && value.getText().length() > 0
+                    && !valuation.getText().toString().equals("0")) {
+                double valuation_ = Double.parseDouble(valuation.getText().toString());
+                double value_ = Double.parseDouble(value.getText().toString());
+                double have_value_ = Double.parseDouble(have_value.getText().toString());
+                buy_share.setText(df.format(getBayShare(have_value_, value_, valuation_)));
+            }
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+
+        }
+    };
+    TextWatcher colorWatcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            if (count > 0) {
+                double number = Double.parseDouble(s.toString());
+                if (number > 0) {
+                    buy_share.setTextColor(Color.parseColor("#FF0000"));
+                } else {
+                    buy_share.setTextColor(Color.parseColor("#008000"));
+                }
+            }
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+
+        }
+    };
+
+
+    private double getValue(double unit_price, double share) {
+        return unit_price * share;
+    }
+
+    private double getNewValue(double valuation, double share) {
+        return valuation * share;
+    }
+
+    private double getHaveValue(double valuation, double have_share) {
+        return valuation * have_share;
+    }
+
+    private double getProfit(double have_value, double value) {
+        return have_value - value;
+    }
+
+    private double getIncrease(double valuation, double unit_price) {
+        return (valuation - unit_price) / unit_price * 100;
+    }
+
+
+    /**
+     * 获取买卖份额
+     *
+     * @param new_value 新市值
+     * @param value     市值
+     * @param valuation 估值
+     * @return
+     */
+    private double getBayShare(double new_value, double value, double valuation) {
+        return (value - new_value) / valuation;
+    }
+
+    /**
+     * 离开界面的时候保存数据
+     */
+    @Override
+    protected void onPause() {
+        super.onPause();
+        SharedPreferences sp = getSharedPreferences("calc", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putString("unit_price", unit_price.getText().toString());
+        editor.putString("share", share.getText().toString());
+        editor.putString("value", value.getText().toString());
+        editor.putString("valuation", valuation.getText().toString());
+        editor.putString("have_share", have_share.getText().toString());
+        editor.putString("have_value", have_value.getText().toString());
+        editor.putString("profit", profit.getText().toString());
+        editor.putString("buy_share", buy_share.getText().toString());
+        editor.putString("new_value", increase.getText().toString());
+        editor.commit();
+    }
+
+    /**
+     * 进来时读取数据
+     */
+    @Override
+    protected void onResume() {
+        super.onResume();
+        SharedPreferences sp = getSharedPreferences("calc", Context.MODE_PRIVATE);
+        unit_price.setText(sp.getString("unit_price", "0"));
+        share.setText(sp.getString("share", "0"));
+        value.setText(sp.getString("value", "0"));
+        valuation.setText(sp.getString("valuation", "0"));
+        have_share.setText(sp.getString("have_share", "0"));
+        have_value.setText(sp.getString("have_value", "0"));
+        profit.setText(sp.getString("profit", "0"));
+        buy_share.setText(sp.getString("buy_share", "0"));
+        increase.setText(sp.getString("new_value", "0"));
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.ac1:
+                unit_price.setText(kong);
+                share.setText(kong);
+                value.setText(kong);
+                break;
+            case R.id.ac2:
+                valuation.setText(kong);
+                have_share.setText(kong);
+                have_value.setText(kong);
+                break;
+            case R.id.ac3:
+                profit.setText(kong);
+                buy_share.setText(kong);
+                increase.setText(kong);
+                break;
+        }
+    }
+
+    /**
+     * 保存当前数值到SharedPreferences里面
+     */
+    public void save() {
+        String name_ = name.getText().toString();
+        SharedPreferences sp = getSharedPreferences("name_", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putString("unit_price", unit_price.getText().toString());
+        editor.putString("share", share.getText().toString());
+        editor.putString("value", value.getText().toString());
+        editor.putString("valuation", valuation.getText().toString());
+        editor.putString("have_share", have_share.getText().toString());
+        editor.putString("have_value", have_value.getText().toString());
+        editor.putString("profit", profit.getText().toString());
+        editor.putString("buy_share", buy_share.getText().toString());
+        editor.putString("new_value", increase.getText().toString());
+        editor.commit();
+    }
+
+}
