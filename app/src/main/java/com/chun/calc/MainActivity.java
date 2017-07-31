@@ -1,6 +1,8 @@
 package com.chun.calc;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -8,6 +10,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatButton;
+import android.support.v7.widget.AppCompatEditText;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -18,8 +21,11 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -33,12 +39,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private EditText profit;
     private EditText buy_share;
     private EditText name;
+    private EditText editText;
     private TableLayout table;
 
     private AppCompatButton ac1;
     private AppCompatButton ac2;
     private AppCompatButton ac3;
+    private AppCompatButton button_save;
     String kong = "0";
+    String KEY_NAME = "calc";
+
+    private Bean bean;
 
     DecimalFormat df = new DecimalFormat("######0.00");
 
@@ -62,6 +73,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ac1 = (AppCompatButton) findViewById(R.id.ac1);
         ac2 = (AppCompatButton) findViewById(R.id.ac2);
         ac3 = (AppCompatButton) findViewById(R.id.ac3);
+        button_save = (AppCompatButton) findViewById(R.id.button_save);
 
         unit_price.addTextChangedListener(firstWatcher);
         share.addTextChangedListener(firstWatcher);
@@ -72,6 +84,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ac1.setOnClickListener(this);
         ac2.setOnClickListener(this);
         ac3.setOnClickListener(this);
+        button_save.setOnClickListener(this);
+
+
+        // 添加
+
 //        TextView tv = new TextView(this);
 //        tv.setText("Hello World");
 //        table.addView(tv);
@@ -249,18 +266,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onPause() {
         super.onPause();
-        SharedPreferences sp = getSharedPreferences("calc", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sp.edit();
-        editor.putString("unit_price", unit_price.getText().toString());
-        editor.putString("share", share.getText().toString());
-        editor.putString("value", value.getText().toString());
-        editor.putString("valuation", valuation.getText().toString());
-        editor.putString("have_share", have_share.getText().toString());
-        editor.putString("have_value", have_value.getText().toString());
-        editor.putString("profit", profit.getText().toString());
-        editor.putString("buy_share", buy_share.getText().toString());
-        editor.putString("new_value", increase.getText().toString());
-        editor.commit();
+        saveRecode("calc");
     }
 
     /**
@@ -269,7 +275,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onResume() {
         super.onResume();
-        SharedPreferences sp = getSharedPreferences("calc", Context.MODE_PRIVATE);
+        SharedPreferences sp = getSharedPreferences(KEY_NAME, Context.MODE_PRIVATE);
         unit_price.setText(sp.getString("unit_price", "0"));
         share.setText(sp.getString("share", "0"));
         value.setText(sp.getString("value", "0"));
@@ -279,6 +285,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         profit.setText(sp.getString("profit", "0"));
         buy_share.setText(sp.getString("buy_share", "0"));
         increase.setText(sp.getString("new_value", "0"));
+
     }
 
     @Override
@@ -299,6 +306,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 buy_share.setText(kong);
                 increase.setText(kong);
                 break;
+            case R.id.button_save:
+                showSaveView();
+                break;
         }
     }
 
@@ -309,16 +319,76 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         String name_ = name.getText().toString();
         SharedPreferences sp = getSharedPreferences("name_", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
-        editor.putString("unit_price", unit_price.getText().toString());
-        editor.putString("share", share.getText().toString());
-        editor.putString("value", value.getText().toString());
-        editor.putString("valuation", valuation.getText().toString());
-        editor.putString("have_share", have_share.getText().toString());
-        editor.putString("have_value", have_value.getText().toString());
-        editor.putString("profit", profit.getText().toString());
-        editor.putString("buy_share", buy_share.getText().toString());
-        editor.putString("new_value", increase.getText().toString());
-        editor.commit();
+        String before = sp.getString("name000", "");
+        if ("".equals(before)) {
+            editor.putString("name000", name_);
+            editor.apply();
+            saveRecode(name_);
+            Toast.makeText(this, "保存成功", Toast.LENGTH_LONG).show();
+        } else {
+            String spiteee = "|";
+            String[] befores = before.split(spiteee);
+            boolean isExist = false;
+            for (String s : befores) {
+                if (s.equals(name_)) {
+                    isExist = true;
+                }
+            }
+            if (isExist) {
+                Toast.makeText(this, "保存失败，该名字已存在", Toast.LENGTH_LONG).show();
+            } else {
+                editor.putString("name000", before + "#" + name_);
+                editor.apply();
+                saveRecode(name_);
+                Toast.makeText(this, "保存成功", Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+    /**
+     * 弹出一个保存的弹出，输入名字保存
+     */
+    public void showSaveView() {
+        android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(this);
+        builder.setTitle("确定保存吗？");
+        builder.setMessage("保存的名字为：" + name.getText().toString());
+        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                save();
+                dialog.dismiss();
+            }
+        });
+        builder.show();
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        KEY_NAME = data.getStringExtra("name");
+    }
+
+    private void saveRecode(String spname) {
+        SharedPreferences spp = getSharedPreferences(spname, MODE_PRIVATE);
+        SharedPreferences.Editor editorr = spp.edit();
+        editorr.putString("unit_price", unit_price.getText().toString());
+        editorr.putString("share", share.getText().toString());
+        editorr.putString("value", value.getText().toString());
+        editorr.putString("valuation", valuation.getText().toString());
+        editorr.putString("have_share", have_share.getText().toString());
+        editorr.putString("have_value", have_value.getText().toString());
+        editorr.putString("profit", profit.getText().toString());
+        editorr.putString("buy_share", buy_share.getText().toString());
+        editorr.putString("new_value", increase.getText().toString());
+        editorr.apply();
+
     }
 
 }
