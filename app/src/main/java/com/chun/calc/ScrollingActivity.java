@@ -1,10 +1,11 @@
 package com.chun.calc;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -12,9 +13,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import org.w3c.dom.Text;
-
-import java.util.List;
 
 public class ScrollingActivity extends AppCompatActivity {
 
@@ -29,54 +27,77 @@ public class ScrollingActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
-        datas = getIntent().getStringArrayExtra("calc");
-        adapter = new MyAdapter(datas);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(ScrollingActivity.this);
+        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        datas = getDatas();
+        adapter = new MyAdapter(ScrollingActivity.this, datas);
         recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(linearLayoutManager);
     }
 
-    class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
+    private String[] getDatas() {
+        String[] ss = {};
+        SharedPreferences sp = getSharedPreferences("name_", Context.MODE_PRIVATE);
+        String before = sp.getString("name000", "");
+        ss = before.split("\\#");
+        return ss;
+    }
 
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent();
+        intent.putExtra("name", "calc");
+        setResult(0, intent);
+        finish();
+    }
 
-        public String[] datas = null;
+    class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-        public MyAdapter(String[] datas) {
+        private Context mContext;
+        private String[] datas;//数据
+
+        public MyAdapter(Context context, String[] datas) {
+            mContext = context;
             this.datas = datas;
         }
 
         @Override
-        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_textview, parent);
-            ViewHolder vh = new ViewHolder(view);
-            return vh;
+        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(mContext).inflate(R.layout.item_textview, parent,
+                    false);//这个布局就是一个imageview用来显示图片
+            MyViewHolder holder = new MyViewHolder(view);
+            return holder;
         }
 
         @Override
-        public void onBindViewHolder(ViewHolder holder, final int position) {
-            holder.mTextView.setText(datas[position]);
-            holder.mTextView.setOnClickListener(new View.OnClickListener() {
+        public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+            MyViewHolder myViewHolder = (MyViewHolder) holder;
+            final String ss = datas[position];
+            myViewHolder.textView.setText(datas[position]);
+            myViewHolder.textView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = getIntent();
-                    intent.putExtra("result", datas[position]);
+                    Intent intent = new Intent();
+                    intent.putExtra("name", ss);
                     setResult(0, intent);
                     finish();
                 }
             });
-
         }
 
         @Override
         public int getItemCount() {
-            return datas.length;
+            return datas.length;//获取数据的个数
         }
+    }
 
-        public class ViewHolder extends RecyclerView.ViewHolder {
-            public TextView mTextView;
+    class MyViewHolder extends RecyclerView.ViewHolder {
+        private TextView textView;
 
-            public ViewHolder(View view) {
-                super(view);
-                mTextView = (TextView) view.findViewById(R.id.textview);
-            }
+        public MyViewHolder(View view) {
+            super(view);
+            textView = (TextView) view.findViewById(R.id.textview);
         }
     }
 }
+

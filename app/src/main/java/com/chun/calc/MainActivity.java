@@ -86,11 +86,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ac3.setOnClickListener(this);
         button_save.setOnClickListener(this);
 
+        TextView tv = new TextView(this);
+        tv.setText("查看记录");
+        tv.setTextColor(Color.WHITE);
+        tv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivityForResult(new Intent(MainActivity.this, ScrollingActivity.class), 0);
+            }
+        });
+        toolbar.addView(tv);
 
         // 添加
 
-//        TextView tv = new TextView(this);
-//        tv.setText("Hello World");
+
 //        table.addView(tv);
     }
 
@@ -325,8 +334,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             editor.apply();
             saveRecode(name_);
             Toast.makeText(this, "保存成功", Toast.LENGTH_LONG).show();
+            name.setText("");
         } else {
-            String spiteee = "|";
+            String spiteee = "\\#";
             String[] befores = before.split(spiteee);
             boolean isExist = false;
             for (String s : befores) {
@@ -341,6 +351,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 editor.apply();
                 saveRecode(name_);
                 Toast.makeText(this, "保存成功", Toast.LENGTH_LONG).show();
+                name.setText("");
             }
         }
     }
@@ -388,7 +399,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         editorr.putString("buy_share", buy_share.getText().toString());
         editorr.putString("new_value", increase.getText().toString());
         editorr.apply();
-
     }
 
 }

@@ -31,5 +31,4 @@ dependencies {
     compile "com.github.Raizlabs.DBFlow:dbflow:4.0.5"
 
 
-    testCompile 'junit:junit:4.12'
 }
