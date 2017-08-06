@@ -6,11 +6,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatButton;
-import android.support.v7.widget.AppCompatEditText;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -18,26 +15,23 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private EditText unit_price;
-    private EditText share;
-    private EditText value;
-    private EditText valuation;
-    private EditText have_share;
-    private EditText have_value;
-    private EditText increase;
-    private EditText profit;
-    private EditText buy_share;
+    private EditText unit_price;// 单价
+    private EditText share;// 份额
+    private EditText value;// 市值
+    private EditText valuation;// 估价
+    private EditText have_share;// 持有份额
+    private EditText have_value;// 持有市值
+    private EditText increase;// 涨幅
+    private EditText profit;// 盈亏额
+    private EditText buy_share;// 买卖份额
     private EditText name;
     private EditText editText;
     private TableLayout table;
@@ -79,7 +73,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         share.addTextChangedListener(firstWatcher);
         valuation.addTextChangedListener(valuationWatcher);
         have_share.addTextChangedListener(valuationWatcher);
-//        new_value.addTextChangedListener(newValueWatcher);
+        profit.addTextChangedListener(profitWatcher);
         buy_share.addTextChangedListener(colorWatcher);
         ac1.setOnClickListener(this);
         ac2.setOnClickListener(this);
@@ -167,11 +161,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 double value_ = Double.parseDouble(value.getText().toString());
                 double have_share_ = Double.parseDouble(have_share.getText().toString());
                 have_value.setText(df.format(getHaveValue(valuation_, have_share_)));// 现有市值
-                profit.setText(
-                        df.format(
-                                getProfit(
-                                        Double.parseDouble(
-                                                have_value.getText().toString()), value_)));// 盈亏额
+                if (valuation.hasFocus()) {
+                    profit.setText(
+                            df.format(
+                                    getProfit(
+                                            Double.parseDouble(
+                                                    have_value.getText().toString()), value_)));// 盈亏额
+                }
                 buy_share.setText(df.format(getBayShare(getHaveValue(valuation_, have_share_), value_, valuation_)));// 买卖份额
             }
             if (valuation.getText().length() > 0
@@ -181,7 +177,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 double unit_price_ = Double.parseDouble(unit_price.getText().toString());
                 increase.setText(df.format(getIncrease(valuation_, unit_price_)) + "%");// 涨跌幅
             }
-
         }
 
         @Override
@@ -235,6 +230,32 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     };
 
+    TextWatcher profitWatcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            if (have_share.getText().length() > 0
+                    && profit.getText().length() > 0
+                    && value.getText().length() > 0
+                    && profit.hasFocus()
+                    && !have_share.getText().toString().equals("0")) {
+                double value_ = Double.parseDouble(value.getText().toString());
+                double profit_ = Double.parseDouble(profit.getText().toString());
+                double have_share_ = Double.parseDouble(have_share.getText().toString());
+                valuation.setText(df.format(getValuation(value_, profit_, have_share_)));
+            }
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+
+        }
+    };
+
 
     private double getValue(double unit_price, double share) {
         return unit_price * share;
@@ -244,14 +265,35 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return valuation * share;
     }
 
+    /**
+     * 获取持有市值 估值乘以持有份额
+     *
+     * @param valuation
+     * @param have_share
+     * @return
+     */
     private double getHaveValue(double valuation, double have_share) {
         return valuation * have_share;
     }
 
+    /**
+     * 获取盈亏额 持有市值 - 市值
+     *
+     * @param have_value
+     * @param value
+     * @return
+     */
     private double getProfit(double have_value, double value) {
         return have_value - value;
     }
 
+    /**
+     * 获取涨幅 （估值 - 单价） / 单价
+     *
+     * @param valuation
+     * @param unit_price
+     * @return
+     */
     private double getIncrease(double valuation, double unit_price) {
         return (valuation - unit_price) / unit_price * 100;
     }
@@ -268,6 +310,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private double getBayShare(double new_value, double value, double valuation) {
         return (value - new_value) / valuation;
     }
+
+
+    /**
+     * 获取估值
+     *
+     * @param value      市值
+     * @param profit     盈亏额
+     * @param have_share 持有份额
+     * @return
+     */
+    private double getValuation(double value, double profit, double have_share) {
+        return (value - profit) / have_share;
+    }
+
 
     /**
      * 离开界面的时候保存数据
