@@ -129,7 +129,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             if (unit_price.getText().length() > 0 && share.getText().length() > 0) {
                 double number = Double.parseDouble(unit_price.getText().toString());
                 double share_ = Double.parseDouble(share.getText().toString());
-                value.setText(df.format(getValue(number, share_)));
+                value.setText(df.format(Calc.getValue(number, share_)));
                 have_share.setText(share.getText());
             }
             if (valuation.getText().length() > 0
@@ -137,7 +137,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     && !unit_price.getText().toString().equals("0")) {
                 double valuation_ = Double.parseDouble(valuation.getText().toString());
                 double unit_price_ = Double.parseDouble(unit_price.getText().toString());
-                increase.setText(df.format(getIncrease(valuation_, unit_price_)) + "%");// 涨跌幅
+                increase.setText(df.format(Calc.getIncrease(valuation_, unit_price_)) + "%");// 涨跌幅
             }
         }
 
@@ -160,22 +160,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 double valuation_ = Double.parseDouble(valuation.getText().toString());
                 double value_ = Double.parseDouble(value.getText().toString());
                 double have_share_ = Double.parseDouble(have_share.getText().toString());
-                have_value.setText(df.format(getHaveValue(valuation_, have_share_)));// 现有市值
+                have_value.setText(df.format(Calc.getHaveValue(valuation_, have_share_)));// 现有市值
                 if (valuation.hasFocus()) {
                     profit.setText(
                             df.format(
-                                    getProfit(
+                                    Calc.getProfit(
                                             Double.parseDouble(
                                                     have_value.getText().toString()), value_)));// 盈亏额
                 }
-                buy_share.setText(df.format(getBayShare(getHaveValue(valuation_, have_share_), value_, valuation_)));// 买卖份额
+                buy_share.setText(df.format(Calc.getBayShare(Calc.getHaveValue(valuation_, have_share_), value_, valuation_)));// 买卖份额
             }
             if (valuation.getText().length() > 0
                     && unit_price.getText().length() > 0
                     && !unit_price.getText().toString().equals("0")) {
                 double valuation_ = Double.parseDouble(valuation.getText().toString());
                 double unit_price_ = Double.parseDouble(unit_price.getText().toString());
-                increase.setText(df.format(getIncrease(valuation_, unit_price_)) + "%");// 涨跌幅
+                increase.setText(df.format(Calc.getIncrease(valuation_, unit_price_)) + "%");// 涨跌幅
             }
         }
 
@@ -197,7 +197,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 double valuation_ = Double.parseDouble(valuation.getText().toString());
                 double value_ = Double.parseDouble(value.getText().toString());
                 double have_value_ = Double.parseDouble(have_value.getText().toString());
-                buy_share.setText(df.format(getBayShare(have_value_, value_, valuation_)));
+                buy_share.setText(df.format(Calc.getBayShare(have_value_, value_, valuation_)));
             }
         }
 
@@ -246,7 +246,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 double value_ = Double.parseDouble(value.getText().toString());
                 double profit_ = Double.parseDouble(profit.getText().toString());
                 double have_share_ = Double.parseDouble(have_share.getText().toString());
-                valuation.setText(df.format(getValuation(value_, profit_, have_share_)));
+                valuation.setText(df.format(Calc.getValuation(value_, profit_, have_share_)));
             }
         }
 
@@ -255,75 +255,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         }
     };
-
-
-    private double getValue(double unit_price, double share) {
-        return unit_price * share;
-    }
-
-    private double getNewValue(double valuation, double share) {
-        return valuation * share;
-    }
-
-    /**
-     * 获取持有市值 估值乘以持有份额
-     *
-     * @param valuation
-     * @param have_share
-     * @return
-     */
-    private double getHaveValue(double valuation, double have_share) {
-        return valuation * have_share;
-    }
-
-    /**
-     * 获取盈亏额 持有市值 - 市值
-     *
-     * @param have_value
-     * @param value
-     * @return
-     */
-    private double getProfit(double have_value, double value) {
-        return have_value - value;
-    }
-
-    /**
-     * 获取涨幅 （估值 - 单价） / 单价
-     *
-     * @param valuation
-     * @param unit_price
-     * @return
-     */
-    private double getIncrease(double valuation, double unit_price) {
-        return (valuation - unit_price) / unit_price * 100;
-    }
-
-
-    /**
-     * 获取买卖份额
-     *
-     * @param new_value 新市值
-     * @param value     市值
-     * @param valuation 估值
-     * @return
-     */
-    private double getBayShare(double new_value, double value, double valuation) {
-        return (value - new_value) / valuation;
-    }
-
-
-    /**
-     * 获取估值
-     *
-     * @param value      市值
-     * @param profit     盈亏额
-     * @param have_share 持有份额
-     * @return
-     */
-    private double getValuation(double value, double profit, double have_share) {
-        return (value - profit) / have_share;
-    }
-
 
     /**
      * 离开界面的时候保存数据
