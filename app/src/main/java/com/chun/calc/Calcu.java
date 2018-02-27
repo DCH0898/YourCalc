@@ -20,19 +20,19 @@ public class Calcu {
     /**
      * 获取盈亏额 持有市值 - 市值
      *
-     * @param have_value 总额
-     * @param value      市值
+     * @param total 总额
+     * @param value 市值
      * @return 盈亏额
      */
-    public static double getProfit(double have_value, double value) {
-        return value - have_value;
+    public static double getProfit(double total, double value) {
+        return value - total;
     }
 
 
     /**
      * 获取买卖份额
      *
-     * @param profit     盈亏额
+     * @param profit   盈亏额
      * @param netValue 净值
      * @return 买卖份额
      */

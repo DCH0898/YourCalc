@@ -91,4 +91,16 @@
     </string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_scrolling">ScrollingActivity</string>
+    <string name="cost">成本</string>
+    <string name="low_position">底仓</string>
+    <string name="total">总额</string>
+    <string name="net_value">净值</string>
+    <string name="share">份额</string>
+    <string name="value">市值</string>
+    <string name="increase">涨跌幅</string>
+    <string name="profit">盈亏额</string>
+    <string name="buy_share">买卖份额</string>
+    <string name="T_net_value">当晚净值</string>
+    <string name="T_share">当晚份额</string>
+    <string name="T_value">当晚市值</string>
 </resources>
