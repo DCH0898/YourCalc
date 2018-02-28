@@ -77,10 +77,12 @@ public class MainActivity2 extends AppCompatActivity implements View.OnClickList
         ac3 = (AppCompatButton) findViewById(R.id.ac3);
         button_save = (AppCompatButton) findViewById(R.id.button_save);
 
+        costE.addTextChangedListener(costWatcher);
         lowPositionE.addTextChangedListener(lowPositionWatcher);
         totalE.addTextChangedListener(totalWatcher);
-//        netValueE.addTextChangedListener(valueWatcher);
-//        shareE.addTextChangedListener(valueWatcher);
+        netValueE.addTextChangedListener(netValueWatcher);
+        shareE.addTextChangedListener(shareWatcher);
+        valueE.addTextChangedListener(valueWatcher);
 
         ac1.setOnClickListener(this);
         ac2.setOnClickListener(this);
@@ -110,20 +112,20 @@ public class MainActivity2 extends AppCompatActivity implements View.OnClickList
     }
 
 
-    TextWatcher firstWatcher = new TextWatcher() {
+    TextWatcher costWatcher = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
         }
 
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            if (lowPositionE.getText().length() > 0 && totalE.getText().length() > 0) {
-                double number = Double.parseDouble(lowPositionE.getText().toString());
-                double share_ = Double.parseDouble(totalE.getText().toString());
-                costE.setText(df2.format(Calc.getValue(number, share_)));
+            if (s.length() <= 0) {
+                return;
             }
-            if (lowPositionE.getText().length() > 0) {
-                shareE.setText(lowPositionE.getText());
+            double cost = Double.parseDouble(s.toString());
+            if (increaseE.getText().length() > 0) {
+                double increase = Double.parseDouble(increaseE.getText().toString());
+                netValueE.setText(df2.format(Calcu.getCost(cost, increase)));
             }
         }
 
@@ -139,14 +141,15 @@ public class MainActivity2 extends AppCompatActivity implements View.OnClickList
 
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            if (lowPositionE.getText().length() > 0 && totalE.getText().length() > 0) {
-                double number = Double.parseDouble(lowPositionE.getText().toString());
-                double share_ = Double.parseDouble(totalE.getText().toString());
-                costE.setText(df2.format(Calc.getValue(number, share_)));
+            if (s.length() <= 0) {
+                return;
             }
-            if (lowPositionE.getText().length() > 0) {
-                shareE.setText(lowPositionE.getText());
+            double lowPosition = Double.parseDouble(s.toString());
+            if (totalE.getText().length() > 0) {
+                double total = Double.parseDouble(totalE.getText().toString());
+                costE.setText(df2.format(Calcu.getCost(total, lowPosition)));
             }
+            shareE.setText(lowPositionE.getText());
         }
 
         @Override
@@ -161,13 +164,65 @@ public class MainActivity2 extends AppCompatActivity implements View.OnClickList
 
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            if (count <= 0) {
+            if (s.length() <= 0) {
                 return;
             }
             double total = Double.parseDouble(s.toString());
             if (valueE.getText().length() > 0) {
                 double value = Double.parseDouble(valueE.getText().toString());
                 profitE.setText(df.format(Calcu.getProfit(total, value)));
+            }
+            if (lowPositionE.getText().length() > 0) {
+                double lowPosition = Double.parseDouble(lowPositionE.getText().toString());
+                costE.setText(df2.format(Calcu.getCost(total, lowPosition)));
+            }
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+
+        }
+    };
+    TextWatcher netValueWatcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            if (s.length() <= 0) {
+                return;
+            }
+            double netValue = Double.parseDouble(s.toString());
+            if (shareE.getText().length() > 0) {
+                double share = Double.parseDouble(shareE.getText().toString());
+                valueE.setText(df.format(Calcu.getValue(netValue, share)));
+            }
+            if (profitE.getText().length() > 0) {
+                double profit = Double.parseDouble(profitE.getText().toString());
+                costE.setText(df2.format(Calcu.getBayShare(profit, netValue)));
+            }
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+
+        }
+    };
+    TextWatcher shareWatcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            if (s.length() <= 0) {
+                return;
+            }
+            double share = Double.parseDouble(s.toString());
+            if (netValueE.getText().length() > 0) {
+                double netValue = Double.parseDouble(netValueE.getText().toString());
+                valueE.setText(df.format(Calcu.getValue(netValue, share)));
             }
         }
 
@@ -183,10 +238,13 @@ public class MainActivity2 extends AppCompatActivity implements View.OnClickList
 
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            if (netValueE.getText().length() > 0 && shareE.getText().length() > 0) {
-                double value = Calcu.getValue(Double.parseDouble(netValueE.getText().toString()),
-                        Double.parseDouble(shareE.getText().toString()));
-                valueE.setText(df.format(value));
+            if (s.length() <= 0) {
+                return;
+            }
+            double value = Double.parseDouble(s.toString());
+            if (totalE.getText().length() > 0) {
+                double total = Double.parseDouble(totalE.getText().toString());
+                valueE.setText(df.format(Calcu.getProfit(total, value)));
             }
         }
 
@@ -195,77 +253,7 @@ public class MainActivity2 extends AppCompatActivity implements View.OnClickList
 
         }
     };
-//    TextWatcher newValueWatcher = new TextWatcher() {
-//        @Override
-//        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-//        }
-//
-//        @Override
-//        public void onTextChanged(CharSequence s, int start, int before, int count) {
-//            if (valuation.getText().length() > 0
-//                    && value.getText().length() > 0
-//                    && !valuation.getText().toString().equals("0")) {
-//                double valuation_ = Double.parseDouble(valuation.getText().toString());
-//                double value_ = Double.parseDouble(value.getText().toString());
-//                double have_value_ = Double.parseDouble(have_value.getText().toString());
-//                buy_share.setText(df.format(Calc.getBayShare(have_value_, value_, valuation_)));
-//            }
-//        }
-//
-//        @Override
-//        public void afterTextChanged(Editable s) {
-//
-//        }
-//    };
-//    TextWatcher colorWatcher = new TextWatcher() {
-//        @Override
-//        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-//
-//        }
-//
-//        @Override
-//        public void onTextChanged(CharSequence s, int start, int before, int count) {
-//            if (count > 0) {
-//                double number = Double.parseDouble(s.toString());
-//                if (number > 0) {
-//                    buy_share.setTextColor(Color.parseColor("#FF0000"));
-//                } else {
-//                    buy_share.setTextColor(Color.parseColor("#008000"));
-//                }
-//            }
-//        }
-//
-//        @Override
-//        public void afterTextChanged(Editable s) {
-//
-//        }
-//    };
-//
-//    TextWatcher profitWatcher = new TextWatcher() {
-//        @Override
-//        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-//
-//        }
-//
-//        @Override
-//        public void onTextChanged(CharSequence s, int start, int before, int count) {
-//            if (have_share.getText().length() > 0
-//                    && profit.getText().length() > 0
-//                    && value.getText().length() > 0
-//                    && profit.hasFocus()
-//                    && !have_share.getText().toString().equals("0")) {
-//                double value_ = Double.parseDouble(value.getText().toString());
-//                double profit_ = Double.parseDouble(profit.getText().toString());
-//                double have_share_ = Double.parseDouble(have_share.getText().toString());
-//                valuation.setText(df.format(Calc.getValuation(value_, profit_, have_share_)));
-//            }
-//        }
-//
-//        @Override
-//        public void afterTextChanged(Editable s) {
-//
-//        }
-//    };
+
 
     /**
      * 离开界面的时候保存数据

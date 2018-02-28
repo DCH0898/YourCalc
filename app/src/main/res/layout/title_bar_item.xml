@@ -40,6 +40,7 @@
                 style="@style/titleBarText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="@android:color/black"
                 android:text="消息" />
         </LinearLayout>
 
@@ -54,6 +55,7 @@
             android:orientation="horizontal">
 
             <ProgressBar
+                android:visibility="gone"
                 android:id="@+id/progressBar"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
