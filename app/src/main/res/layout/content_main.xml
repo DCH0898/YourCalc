@@ -24,6 +24,67 @@
             <TextView
                 android:layout_weight="1"
                 android:gravity="center"
+                android:text="成本"
+                android:textColor="@android:color/holo_green_dark" />
+
+            <TextView
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="底仓"
+                android:textColor="@android:color/holo_green_dark" />
+
+            <TextView
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="总额" />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="10dp"
+            android:orientation="horizontal"
+            android:weightSum="3">
+
+            <EditText
+                android:id="@+id/cost"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:inputType="numberDecimal"
+                android:text="0"
+                android:textColor="@android:color/holo_green_dark" />
+
+            <EditText
+                android:id="@+id/bilge"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:inputType="numberDecimal"
+                android:text="0"
+                android:textColor="@android:color/holo_green_dark" />
+
+            <EditText
+                android:id="@+id/total"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:inputType="numberDecimal"
+                android:text="0" />
+
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:orientation="horizontal"
+            android:weightSum="3">
+
+            <TextView
+                android:layout_weight="1"
+                android:gravity="center"
                 android:text="单价"
                 android:textColor="@android:color/holo_green_dark" />
 
@@ -37,7 +98,6 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="市值" />
-
 
         </TableRow>
 

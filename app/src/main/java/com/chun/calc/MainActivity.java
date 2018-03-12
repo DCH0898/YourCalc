@@ -23,6 +23,9 @@ import java.text.DecimalFormat;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
+    private EditText cost;// 成本
+    private EditText bilge;// 底仓
+    private EditText total;// 总额
     private EditText unit_price;// 单价
     private EditText share;// 份额
     private EditText value;// 市值
@@ -53,6 +56,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        cost = (EditText) findViewById(R.id.cost);
+        bilge = (EditText) findViewById(R.id.bilge);
+        total = (EditText) findViewById(R.id.total);
         unit_price = (EditText) findViewById(R.id.unit_price);
         share = (EditText) findViewById(R.id.share);
         value = (EditText) findViewById(R.id.value);
@@ -69,6 +75,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ac3 = (AppCompatButton) findViewById(R.id.ac3);
         button_save = (AppCompatButton) findViewById(R.id.button_save);
 
+        bilge.addTextChangedListener(costWatcher);
+        total.addTextChangedListener(costWatcher);
         unit_price.addTextChangedListener(firstWatcher);
         share.addTextChangedListener(firstWatcher);
         valuation.addTextChangedListener(valuationWatcher);
@@ -119,6 +127,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
+    TextWatcher costWatcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            if (total.getText().length() > 0 && bilge.getText().length() > 0) {
+                double total_ = Double.parseDouble(total.getText().toString());
+                double bilge_ = Double.parseDouble(bilge.getText().toString());
+                cost.setText(Calc.getCost(total_, bilge_) + "");
+            }
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+
+        }
+    };
     TextWatcher firstWatcher = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -331,15 +358,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     isExist = true;
                 }
             }
-            if (isExist) {
-                Toast.makeText(this, "保存失败，该名字已存在", Toast.LENGTH_LONG).show();
-            } else {
-                editor.putString("name000", before + "#" + name_);
-                editor.apply();
-                saveRecode(name_);
-                Toast.makeText(this, "保存成功", Toast.LENGTH_LONG).show();
-                name.setText("");
-            }
+//            if (isExist) {
+//                Toast.makeText(this, "保存失败，该名字已存在", Toast.LENGTH_LONG).show();
+//            } else {
+            editor.putString("name000", before + "#" + name_);
+            editor.apply();
+            saveRecode(name_);
+            Toast.makeText(this, "保存成功", Toast.LENGTH_LONG).show();
+            name.setText("");
+//            }
         }
     }
 

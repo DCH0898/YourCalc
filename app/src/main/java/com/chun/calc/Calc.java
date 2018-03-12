@@ -7,6 +7,28 @@ package com.chun.calc;
 
 public class Calc {
     /**
+     * 获取成本 总额 / 底仓
+     *
+     * @param total 总额
+     * @param bilge 底仓
+     * @return 成本
+     */
+    public static double getCost(double total, double bilge) {
+        return total / bilge;
+    }
+
+    /**
+     * 获取净值 成本 * （1 + 涨跌幅）
+     *
+     * @param cost     成本
+     * @param increase 涨跌幅
+     * @return 市值
+     */
+    public static double getNetValue(double cost, double increase) {
+        return cost * (1 + increase);
+    }
+
+    /**
      * 获取市值 单价 * 份额
      *
      * @param unit_price 单价
