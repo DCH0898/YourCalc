@@ -193,14 +193,18 @@ public class MainActivity2 extends AppCompatActivity implements View.OnClickList
             if (s.length() <= 0) {
                 return;
             }
-            double netValue = Double.parseDouble(s.toString());
-            if (shareE.getText().length() > 0) {
-                double share = Double.parseDouble(shareE.getText().toString());
-                valueE.setText(df.format(Calcu.getValue(netValue, share)));
-            }
-            if (profitE.getText().length() > 0) {
-                double profit = Double.parseDouble(profitE.getText().toString());
-                costE.setText(df2.format(Calcu.getBayShare(profit, netValue)));
+            try {
+                double netValue = Double.parseDouble(s.toString());
+                if (shareE.getText().length() > 0) {
+                    double share = Double.parseDouble(shareE.getText().toString());
+                    valueE.setText(df.format(Calcu.getValue(netValue, share)));
+                }
+                if (profitE.getText().length() > 0) {
+                    double profit = Double.parseDouble(profitE.getText().toString());
+                    costE.setText(df2.format(Calcu.getBayShare(profit, netValue)));
+                }
+            }catch (NumberFormatException e){
+                e.printStackTrace();
             }
         }
 

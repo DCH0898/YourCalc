@@ -14,7 +14,7 @@ public class Calcu {
      * @return 市值
      */
     public static double getCost(double total, double low_position) {
-        return total / low_position;
+        return low_position == 0 ? 0 : total / low_position;
     }
 
     /**
@@ -72,6 +72,6 @@ public class Calcu {
      * @return 估值
      */
     public static double getValuation(double value, double profit, double have_share) {
-        return (value - profit) / have_share;
+        return have_share == 0 ? 0 : (value - profit) / have_share;
     }
 }

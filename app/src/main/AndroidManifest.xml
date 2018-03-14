@@ -25,7 +25,7 @@
             android:name=".MainActivity"
             android:label="@string/title_activity_scrolling"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".SecondActivity" />
+        <activity android:name=".activity.SecondActivity" />
     </application>
 
 </manifest>
