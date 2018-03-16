@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.support.v7.widget.AppCompatEditText;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
@@ -87,6 +88,128 @@ public class MyAdapter2 extends BaseQuickAdapter {
         valuationACE.addTextChangedListener(textWatcher);
         shareACE.addTextChangedListener(textWatcher);
         quotaACE.addTextChangedListener(textWatcher);
+
+        TextWatcher valuationTW = new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.length() <= 0) {
+                    return;
+                }
+                ((BeanTwo) getData().get(helper.getAdapterPosition())).setValuation(Double.parseDouble(s.toString()));
+            }
+        };
+        TextWatcher shareTW = new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.length() <= 0) {
+                    return;
+                }
+                ((BeanTwo) getData().get(helper.getAdapterPosition())).setShare(Double.parseDouble(s.toString()));
+            }
+        };
+        TextWatcher quotaTW = new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.length() <= 0) {
+                    return;
+                }
+                ((BeanTwo) getData().get(helper.getAdapterPosition())).setQuota(Double.parseDouble(s.toString()));
+            }
+        };
+        TextWatcher titleTW = new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.length() <= 0) {
+                    return;
+                }
+                ((BeanTwo) getData().get(helper.getAdapterPosition())).setTitle(s.toString());
+            }
+        };
+        TextWatcher profitTW = new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.length() <= 0) {
+                    return;
+                }
+                ((BeanTwo) getData().get(helper.getAdapterPosition())).setProfit(Double.parseDouble(s.toString()));
+            }
+        };
+        TextWatcher noticeTW = new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.length() <= 0) {
+                    return;
+                }
+                ((BeanTwo) getData().get(helper.getAdapterPosition())).setNotice(s.toString());
+            }
+        };
+
+        ((TextView)helper.getView(R.id.valuation)).addTextChangedListener(valuationTW);
+        ((TextView)helper.getView(R.id.share)).addTextChangedListener(shareTW);
+        ((TextView)helper.getView(R.id.quota)).addTextChangedListener(quotaTW);
+        ((TextView)helper.getView(R.id.title)).addTextChangedListener(titleTW);
+        ((TextView)helper.getView(R.id.profit)).addTextChangedListener(profitTW);
+        ((TextView)helper.getView(R.id.notice)).addTextChangedListener(noticeTW);
     }
 
 }

@@ -5,6 +5,8 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.AppCompatEditText;
+import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -32,11 +34,14 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
     private MyAdapter2 myAdapter2;
     private RecyclerView recyclerView1;
     private RecyclerView recyclerView2;
+    private LinearLayoutManager linearLayoutManager1;
+    private LinearLayoutManager linearLayoutManager2;
     private TextView firstTabText;
     private TextView secondTabText;
     Gson gson1 = new Gson();
     List<BeanTwo> list1 = new ArrayList<>();
     List<BeanTwo> list2 = new ArrayList<>();
+    SharedPreferences sp;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -47,14 +52,14 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
 
     private void initView() {
         recyclerView1 = (RecyclerView) findViewById(R.id.recyclerview1);
-        LinearLayoutManager linearLayoutManager1 = new LinearLayoutManager(this);
+        linearLayoutManager1 = new LinearLayoutManager(this);
         linearLayoutManager1.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView1.setLayoutManager(linearLayoutManager1);
         myAdapter1 = new MyAdapter1(R.layout.item_second);
         recyclerView1.setAdapter(myAdapter1);
 
         recyclerView2 = (RecyclerView) findViewById(R.id.recyclerview2);
-        LinearLayoutManager linearLayoutManager2 = new LinearLayoutManager(this);
+        linearLayoutManager2 = new LinearLayoutManager(this);
         linearLayoutManager2.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView2.setLayoutManager(linearLayoutManager2);
         myAdapter2 = new MyAdapter2(R.layout.item_second2);
@@ -64,12 +69,13 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
         secondTabText = (TextView) findViewById(R.id.second_tab_text);
         firstTabText.setOnClickListener(this);
         secondTabText.setOnClickListener(this);
+
+        sp = getSharedPreferences(KEY_NAME, Context.MODE_PRIVATE);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        SharedPreferences sp = getSharedPreferences(KEY_NAME, Context.MODE_PRIVATE);
         String json = sp.getString("one", "");
         String json2 = sp.getString("two", "");
         if ("".equals(json)) {
@@ -120,6 +126,7 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
     @Override
     protected void onPause() {
         super.onPause();
+        saveData();
     }
 
     private void select(int p) {
@@ -133,14 +140,13 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     private void saveView(int p) {
-        SharedPreferences sp = getSharedPreferences(KEY_NAME, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sp.edit();
-        if (p == 1) {
-            editor.putString("one", gson1.toJson(myAdapter1.getData()));
-        } else if (p == 2) {
-            editor.putString("two", gson1.toJson(myAdapter1.getData()));
-        }
-        editor.apply();
+//        SharedPreferences.Editor editor = sp.edit();
+//        if (p == 1) {
+//            editor.putString("one", gson1.toJson(myAdapter1.getData()));
+//        } else if (p == 2) {
+//            editor.putString("two", gson1.toJson(myAdapter1.getData()));
+//        }
+//        editor.apply();
     }
 
     private void showView(int p) {
@@ -167,5 +173,17 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
                 select(2);
                 break;
         }
+    }
+
+    private void saveData() {
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putString("one", gson1.toJson(myAdapter1.getData()));
+        editor.putString("two", gson1.toJson(myAdapter2.getData()));
+        editor.apply();
+    }
+
+    @Override
+    public void finish() {
+        moveTaskToBack(false);
     }
 }
