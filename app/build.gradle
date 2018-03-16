@@ -1,5 +1,14 @@
 apply plugin: 'com.android.application'
 android {
+    signingConfigs {
+        asaiAndroid {
+            keyAlias 'asaiAndroid.keystore'
+            keyPassword '876543'
+            storeFile file('asaiAndroid.keystore')
+            storePassword '876543'
+        }
+    }
+
     compileSdkVersion 24
     buildToolsVersion '26.0.2'
     defaultConfig {
@@ -16,11 +25,19 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
+    //修改生成的apk名字
+    applicationVariants.all { variant ->
+        variant.outputs.all {
+            outputFileName = "日进斗金-${variant.versionName}-${variant.versionCode}-${variant.buildType.name}.apk"
+        }
+    }
+
 
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.asaiAndroid
         }
     }
 }

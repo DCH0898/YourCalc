@@ -6,11 +6,12 @@
     android:orientation="vertical"
     android:paddingBottom="@dimen/dp_10">
 
-    <TextView
+    <android.support.v7.widget.AppCompatEditText
         android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingLeft="20dp"
+        android:layout_marginLeft="20dp"
+        android:minWidth="100dp"
         android:paddingTop="10dp"
         android:textColor="@android:color/black"
         android:textSize="18sp"
