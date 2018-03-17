@@ -5,8 +5,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.AppCompatEditText;
-import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -93,6 +91,7 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
                 beanTwo.setNotice("");
                 beanTwo.setProfit(0);
                 beanTwo.setQuota(0);
+                beanTwo.setTotal(0);
                 beanTwo.setShare(0);
                 beanTwo.setValuation(0);
                 list1.add(beanTwo);
@@ -109,6 +108,7 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
                 beanTwo.setNotice("");
                 beanTwo.setProfit(0);
                 beanTwo.setQuota(0);
+                beanTwo.setTotal(0);
                 beanTwo.setShare(0);
                 beanTwo.setTitle("");
                 beanTwo.setValuation(0);

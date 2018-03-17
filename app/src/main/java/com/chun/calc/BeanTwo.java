@@ -8,8 +8,17 @@ public class BeanTwo {
     private double share;
     private double quota;
     private double profit;
+    private double total;
     private String title;
     private String notice;
+
+    public double getTotal() {
+        return total;
+    }
+
+    public void setTotal(double total) {
+        this.total = total;
+    }
 
     public double getValuation() {
         return valuation;

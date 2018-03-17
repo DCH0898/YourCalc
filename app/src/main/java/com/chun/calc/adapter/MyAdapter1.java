@@ -39,6 +39,9 @@ public class MyAdapter1 extends BaseQuickAdapter {
         if (!FunUtil.isEmpty(beanTwo.getProfit())) {
             helper.setText(R.id.profit, "" + beanTwo.getProfit());
         }
+        if (!FunUtil.isEmpty(beanTwo.getTotal())) {
+            helper.setText(R.id.total, "" + beanTwo.getTotal());
+        }
         if (!FunUtil.isEmpty(beanTwo.getQuota())) {
             helper.setText(R.id.quota, "" + beanTwo.getQuota());
         }
@@ -83,6 +86,7 @@ public class MyAdapter1 extends BaseQuickAdapter {
                             Color.parseColor("#FF0000") : Color.parseColor("#008000"));
                     helper.setTextColor(R.id.notice, profit > 0 ?
                             Color.parseColor("#FF0000") : Color.parseColor("#008000"));
+                    helper.setText(R.id.total, df.format(share * valuation));
                 }
             }
         };
@@ -147,6 +151,25 @@ public class MyAdapter1 extends BaseQuickAdapter {
                 ((BeanTwo) getData().get(helper.getAdapterPosition())).setQuota(Double.parseDouble(s.toString()));
             }
         };
+        TextWatcher totalTW = new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.length() <= 0) {
+                    return;
+                }
+                ((BeanTwo) getData().get(helper.getAdapterPosition())).setTotal(Double.parseDouble(s.toString()));
+            }
+        };
         TextWatcher profitTW = new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -186,11 +209,12 @@ public class MyAdapter1 extends BaseQuickAdapter {
             }
         };
 
-        ((TextView)helper.getView(R.id.valuation)).addTextChangedListener(valuationTW);
-        ((TextView)helper.getView(R.id.share)).addTextChangedListener(shareTW);
-        ((TextView)helper.getView(R.id.quota)).addTextChangedListener(quotaTW);
-        ((TextView)helper.getView(R.id.profit)).addTextChangedListener(profitTW);
-        ((TextView)helper.getView(R.id.notice)).addTextChangedListener(noticeTW);
+        ((TextView) helper.getView(R.id.valuation)).addTextChangedListener(valuationTW);
+        ((TextView) helper.getView(R.id.share)).addTextChangedListener(shareTW);
+        ((TextView) helper.getView(R.id.quota)).addTextChangedListener(quotaTW);
+        ((TextView) helper.getView(R.id.total)).addTextChangedListener(totalTW);
+        ((TextView) helper.getView(R.id.profit)).addTextChangedListener(profitTW);
+        ((TextView) helper.getView(R.id.notice)).addTextChangedListener(noticeTW);
     }
 
 }

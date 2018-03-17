@@ -122,7 +122,7 @@
 
     </LinearLayout>
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/bg"
@@ -130,6 +130,7 @@
         android:padding="@dimen/dp_4">
 
         <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/notice_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
@@ -139,9 +140,18 @@
             android:id="@+id/notice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="" />
+            android:layout_toRightOf="@id/notice_text"
+            tools:text="1000000000" />
 
-    </LinearLayout>
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/total"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="10dp"
+            tools:text="8555011111111" />
+
+    </RelativeLayout>
 
 
 </LinearLayout>
