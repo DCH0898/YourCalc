@@ -11,6 +11,15 @@ public class BeanTwo {
     private double total;
     private String title;
     private String notice;
+    private String bzdm;
+
+    public String getBzdm() {
+        return bzdm;
+    }
+
+    public void setBzdm(String bzdm) {
+        this.bzdm = bzdm;
+    }
 
     public double getTotal() {
         return total;

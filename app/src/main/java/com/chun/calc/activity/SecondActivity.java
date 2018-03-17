@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -14,6 +15,8 @@ import com.chun.calc.BeanTwo;
 import com.chun.calc.R;
 import com.chun.calc.adapter.MyAdapter1;
 import com.chun.calc.adapter.MyAdapter2;
+import com.chun.calc.net.Ajax;
+import com.chun.calc.net.OnLoadDataListener;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -28,6 +31,7 @@ import java.util.List;
 public class SecondActivity extends AppCompatActivity implements View.OnClickListener {
 
     private final String KEY_NAME = "second";
+    private final String TAG = "SecondActivity";
     private MyAdapter1 myAdapter1;
     private MyAdapter2 myAdapter2;
     private RecyclerView recyclerView1;
@@ -81,12 +85,16 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
                 BeanTwo beanTwo = new BeanTwo();
                 if (i == 1) {
                     beanTwo.setTitle("上证50");
+                    beanTwo.setBzdm("001549");
                 } else if (i == 2) {
                     beanTwo.setTitle("创业板");
+                    beanTwo.setBzdm("001593");
                 } else if (i == 3) {
                     beanTwo.setTitle("沪深300");
+                    beanTwo.setBzdm("000961");
                 } else if (i == 4) {
                     beanTwo.setTitle("中证500");
+                    beanTwo.setBzdm("002907");
                 }
                 beanTwo.setNotice("");
                 beanTwo.setProfit(0);
@@ -119,8 +127,30 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
             }.getType());
         }
         myAdapter2.setNewData(list2);
-
+        getNetData(0);
+        getNetData(1);
+        getNetData(2);
+        getNetData(3);
         select(1);
+    }
+
+    private void getNetData(final int position) {
+        Ajax.getInst().get("http://fund.eastmoney.com/Data/FundCompare_Interface.aspx?t=0&bzdm="
+                        + list1.get(position).getBzdm(),
+                new OnLoadDataListener() {
+                    @Override
+                    public void onDataReceiver(String dataContent) {
+                        Log.d(TAG, dataContent);
+                        String[] strings = dataContent.split(",");
+                        ((BeanTwo) myAdapter1.getData().get(position)).setValuation(Double.parseDouble(strings[4]));
+                        myAdapter1.notifyDataSetChanged();
+                    }
+
+                    @Override
+                    public void onError(String errorMessage) {
+                        Log.d(TAG, errorMessage);
+                    }
+                });
     }
 
     @Override
