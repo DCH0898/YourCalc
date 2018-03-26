@@ -17,6 +17,7 @@ import com.chun.calc.adapter.MyAdapter1;
 import com.chun.calc.adapter.MyAdapter2;
 import com.chun.calc.net.Ajax;
 import com.chun.calc.net.OnLoadDataListener;
+import com.chun.calc.util.FunUtil;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -31,6 +32,7 @@ import java.util.List;
 public class SecondActivity extends AppCompatActivity implements View.OnClickListener {
 
     private final String KEY_NAME = "second";
+    private String url = "http://fund.eastmoney.com/Data/FundCompare_Interface.aspx?t=0&bzdm=";
     private final String TAG = "SecondActivity";
     private MyAdapter1 myAdapter1;
     private MyAdapter2 myAdapter2;
@@ -81,29 +83,7 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
         String json = sp.getString("one", "");
         String json2 = sp.getString("two", "");
         if ("".equals(json)) {
-            for (int i = 1; i < 5; i++) {
-                BeanTwo beanTwo = new BeanTwo();
-                if (i == 1) {
-                    beanTwo.setTitle("上证50");
-                    beanTwo.setBzdm("001549");
-                } else if (i == 2) {
-                    beanTwo.setTitle("创业板");
-                    beanTwo.setBzdm("001593");
-                } else if (i == 3) {
-                    beanTwo.setTitle("沪深300");
-                    beanTwo.setBzdm("000961");
-                } else if (i == 4) {
-                    beanTwo.setTitle("中证500");
-                    beanTwo.setBzdm("002907");
-                }
-                beanTwo.setNotice("");
-                beanTwo.setProfit(0);
-                beanTwo.setQuota(0);
-                beanTwo.setTotal(0);
-                beanTwo.setShare(0);
-                beanTwo.setValuation(0);
-                list1.add(beanTwo);
-            }
+            initListOne();
         } else {
             list1 = gson1.fromJson(json, new TypeToken<ArrayList<BeanTwo>>() {
             }.getType());
@@ -111,32 +91,23 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
         myAdapter1.setNewData(list1);
 
         if ("".equals(json2)) {
-            for (int i = 1; i < 9; i++) {
-                BeanTwo beanTwo = new BeanTwo();
-                beanTwo.setNotice("");
-                beanTwo.setProfit(0);
-                beanTwo.setQuota(0);
-                beanTwo.setTotal(0);
-                beanTwo.setShare(0);
-                beanTwo.setTitle("");
-                beanTwo.setValuation(0);
-                list2.add(beanTwo);
-            }
+            initListTwo();
         } else {
             list2 = gson1.fromJson(json2, new TypeToken<ArrayList<BeanTwo>>() {
             }.getType());
         }
         myAdapter2.setNewData(list2);
-        getNetData(0);
-        getNetData(1);
-        getNetData(2);
-        getNetData(3);
+        for (int i = 0; i < 4; i++) {
+            recycleViewOneGetNetData(i);
+        }
+        for (int i = 0; i < 8; i++) {
+            recycleViewTwoGetNetData(i);
+        }
         select(1);
     }
 
-    private void getNetData(final int position) {
-        Ajax.getInst().get("http://fund.eastmoney.com/Data/FundCompare_Interface.aspx?t=0&bzdm="
-                        + list1.get(position).getBzdm(),
+    private void recycleViewOneGetNetData(final int position) {
+        Ajax.getInst().get(url + list1.get(position).getBzdm(),
                 new OnLoadDataListener() {
                     @Override
                     public void onDataReceiver(String dataContent) {
@@ -151,6 +122,66 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
                         Log.d(TAG, errorMessage);
                     }
                 });
+    }
+
+    private void recycleViewTwoGetNetData(final int position) {
+        if (!FunUtil.isEmpty(list2.get(position).getBzdm()) && list2.get(position).getBzdm().length() == 6) {
+            Ajax.getInst().get(url + list2.get(position).getBzdm(),
+                    new OnLoadDataListener() {
+                        @Override
+                        public void onDataReceiver(String dataContent) {
+                            Log.d(TAG, dataContent);
+                            String[] strings = dataContent.split(",");
+                            ((BeanTwo) myAdapter2.getData().get(position)).setValuation(Double.parseDouble(strings[4]));
+                            myAdapter2.notifyDataSetChanged();
+                        }
+
+                        @Override
+                        public void onError(String errorMessage) {
+                            Log.d(TAG, errorMessage);
+                        }
+                    });
+        }
+    }
+
+    private void initListOne() {
+        for (int i = 1; i < 5; i++) {
+            BeanTwo beanTwo = new BeanTwo();
+            if (i == 1) {
+                beanTwo.setTitle("上证50");
+                beanTwo.setBzdm("001549");
+            } else if (i == 2) {
+                beanTwo.setTitle("创业板");
+                beanTwo.setBzdm("001593");
+            } else if (i == 3) {
+                beanTwo.setTitle("沪深300");
+                beanTwo.setBzdm("000961");
+            } else if (i == 4) {
+                beanTwo.setTitle("中证500");
+                beanTwo.setBzdm("002907");
+            }
+            beanTwo.setNotice("");
+            beanTwo.setProfit(0);
+            beanTwo.setQuota(0);
+            beanTwo.setTotal(0);
+            beanTwo.setShare(0);
+            beanTwo.setValuation(0);
+            list1.add(beanTwo);
+        }
+    }
+
+    private void initListTwo() {
+        for (int i = 1; i < 9; i++) {
+            BeanTwo beanTwo = new BeanTwo();
+            beanTwo.setNotice("");
+            beanTwo.setProfit(0);
+            beanTwo.setQuota(0);
+            beanTwo.setTotal(0);
+            beanTwo.setShare(0);
+            beanTwo.setTitle("");
+            beanTwo.setValuation(0);
+            list2.add(beanTwo);
+        }
     }
 
     @Override
@@ -202,6 +233,8 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
             case R.id.second_tab_text:
                 select(2);
                 break;
+            default:
+
         }
     }
 

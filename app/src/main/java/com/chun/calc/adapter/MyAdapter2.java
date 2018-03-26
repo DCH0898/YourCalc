@@ -5,12 +5,15 @@ import android.graphics.Color;
 import android.support.v7.widget.AppCompatEditText;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.chun.calc.BeanTwo;
 import com.chun.calc.R;
+import com.chun.calc.net.Ajax;
+import com.chun.calc.net.OnLoadDataListener;
 import com.chun.calc.util.FunUtil;
 
 import java.text.DecimalFormat;
@@ -50,6 +53,9 @@ public class MyAdapter2 extends BaseQuickAdapter {
         }
         if (!FunUtil.isEmpty(beanTwo.getValuation())) {
             helper.setText(R.id.valuation, "" + beanTwo.getValuation());
+        }
+        if (!FunUtil.isEmpty(beanTwo.getName())) {
+            helper.setText(R.id.name, "" + beanTwo.getName());
         }
 
         final AppCompatEditText valuationACE = helper.getView(R.id.valuation);
@@ -186,6 +192,9 @@ public class MyAdapter2 extends BaseQuickAdapter {
                     return;
                 }
                 ((BeanTwo) getData().get(helper.getAdapterPosition())).setTitle(s.toString());
+                if (s.length() == 6) {
+                    getName(helper.getAdapterPosition(), s.toString());
+                }
             }
         };
         TextWatcher profitTW = new TextWatcher() {
@@ -226,6 +235,25 @@ public class MyAdapter2 extends BaseQuickAdapter {
                 ((BeanTwo) getData().get(helper.getAdapterPosition())).setNotice(s.toString());
             }
         };
+        TextWatcher nameTW = new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.length() <= 0) {
+                    return;
+                }
+                ((BeanTwo) getData().get(helper.getAdapterPosition())).setName(s.toString());
+            }
+        };
 
         ((TextView) helper.getView(R.id.valuation)).addTextChangedListener(valuationTW);
         ((TextView) helper.getView(R.id.share)).addTextChangedListener(shareTW);
@@ -234,6 +262,30 @@ public class MyAdapter2 extends BaseQuickAdapter {
         ((TextView) helper.getView(R.id.title)).addTextChangedListener(titleTW);
         ((TextView) helper.getView(R.id.profit)).addTextChangedListener(profitTW);
         ((TextView) helper.getView(R.id.notice)).addTextChangedListener(noticeTW);
+        ((TextView) helper.getView(R.id.name)).addTextChangedListener(nameTW);
+    }
+
+    private void getName(final int position, String name) {
+        String url = "http://fund.eastmoney.com/Data/FundCompare_Interface.aspx?t=0&bzdm=";
+        Ajax.getInst().get(url + name,
+                new OnLoadDataListener() {
+                    @Override
+                    public void onDataReceiver(String dataContent) {
+                        Log.d(TAG, dataContent);
+                        String[] strings = dataContent.split(",");
+                        updataName(position, strings[1]);
+                    }
+
+                    @Override
+                    public void onError(String errorMessage) {
+                        Log.d(TAG, errorMessage);
+                    }
+                });
+    }
+
+    private void updataName(int position, String name) {
+        ((BeanTwo) getData().get(position)).setName(name);
+        notifyDataSetChanged();
     }
 
 }

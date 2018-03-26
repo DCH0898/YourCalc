@@ -12,6 +12,15 @@ public class BeanTwo {
     private String title;
     private String notice;
     private String bzdm;
+    private String name;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public String getBzdm() {
         return bzdm;
