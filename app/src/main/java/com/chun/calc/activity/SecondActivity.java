@@ -192,22 +192,10 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
 
     private void select(int p) {
         if (p == 1) {
-            saveView(2);
             showView(1);
         } else if (p == 2) {
-            saveView(1);
             showView(2);
         }
-    }
-
-    private void saveView(int p) {
-//        SharedPreferences.Editor editor = sp.edit();
-//        if (p == 1) {
-//            editor.putString("one", gson1.toJson(myAdapter1.getData()));
-//        } else if (p == 2) {
-//            editor.putString("two", gson1.toJson(myAdapter1.getData()));
-//        }
-//        editor.apply();
     }
 
     private void showView(int p) {

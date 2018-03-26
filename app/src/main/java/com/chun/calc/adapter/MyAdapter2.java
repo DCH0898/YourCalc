@@ -6,7 +6,9 @@ import android.support.v7.widget.AppCompatEditText;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
@@ -134,6 +136,7 @@ public class MyAdapter2 extends BaseQuickAdapter {
                 if (s.length() <= 0) {
                     return;
                 }
+                Log.d(TAG, "setShare");
                 ((BeanTwo) getData().get(helper.getAdapterPosition())).setShare(Double.parseDouble(s.toString()));
             }
         };
@@ -153,6 +156,7 @@ public class MyAdapter2 extends BaseQuickAdapter {
                 if (s.length() <= 0) {
                     return;
                 }
+                Log.d(TAG, "setQuota");
                 ((BeanTwo) getData().get(helper.getAdapterPosition())).setQuota(Double.parseDouble(s.toString()));
             }
         };
@@ -172,6 +176,7 @@ public class MyAdapter2 extends BaseQuickAdapter {
                 if (s.length() <= 0) {
                     return;
                 }
+                Log.d(TAG, "setTotal");
                 ((BeanTwo) getData().get(helper.getAdapterPosition())).setTotal(Double.parseDouble(s.toString()));
             }
         };
@@ -191,10 +196,11 @@ public class MyAdapter2 extends BaseQuickAdapter {
                 if (s.length() <= 0) {
                     return;
                 }
+                Log.d(TAG, "setTitle");
                 ((BeanTwo) getData().get(helper.getAdapterPosition())).setTitle(s.toString());
-                if (s.length() == 6) {
-                    getName(helper.getAdapterPosition(), s.toString());
-                }
+//                if (s.length() == 6) {
+//                    getName(helper.getAdapterPosition(), s.toString());
+//                }
             }
         };
         TextWatcher profitTW = new TextWatcher() {
@@ -213,6 +219,7 @@ public class MyAdapter2 extends BaseQuickAdapter {
                 if (s.length() <= 0) {
                     return;
                 }
+                Log.d(TAG, "setProfit");
                 ((BeanTwo) getData().get(helper.getAdapterPosition())).setProfit(Double.parseDouble(s.toString()));
             }
         };
@@ -232,6 +239,7 @@ public class MyAdapter2 extends BaseQuickAdapter {
                 if (s.length() <= 0) {
                     return;
                 }
+                Log.d(TAG, "setNotice");
                 ((BeanTwo) getData().get(helper.getAdapterPosition())).setNotice(s.toString());
             }
         };
@@ -251,6 +259,7 @@ public class MyAdapter2 extends BaseQuickAdapter {
                 if (s.length() <= 0) {
                     return;
                 }
+                Log.d(TAG, "setName");
                 ((BeanTwo) getData().get(helper.getAdapterPosition())).setName(s.toString());
             }
         };
@@ -263,6 +272,15 @@ public class MyAdapter2 extends BaseQuickAdapter {
         ((TextView) helper.getView(R.id.profit)).addTextChangedListener(profitTW);
         ((TextView) helper.getView(R.id.notice)).addTextChangedListener(noticeTW);
         ((TextView) helper.getView(R.id.name)).addTextChangedListener(nameTW);
+
+
+        final AppCompatEditText titleACE = helper.getView(R.id.title);
+        helper.setOnClickListener(R.id.clickSearch, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getName(helper.getAdapterPosition(), titleACE.getText().toString());
+            }
+        });
     }
 
     private void getName(final int position, String name) {
@@ -272,8 +290,13 @@ public class MyAdapter2 extends BaseQuickAdapter {
                     @Override
                     public void onDataReceiver(String dataContent) {
                         Log.d(TAG, dataContent);
-                        String[] strings = dataContent.split(",");
-                        updataName(position, strings[1]);
+                        try {
+                            String[] strings = dataContent.split(",");
+                            updataName(position, strings[1], strings[4]);
+                        } catch (ArrayIndexOutOfBoundsException ex) {
+                            ex.printStackTrace();
+                            Toast.makeText(mContext, "找不到该基金...", Toast.LENGTH_SHORT).show();
+                        }
                     }
 
                     @Override
@@ -283,9 +306,11 @@ public class MyAdapter2 extends BaseQuickAdapter {
                 });
     }
 
-    private void updataName(int position, String name) {
+    private void updataName(int position, String name, String valuation) {
+        Log.d(TAG, "updataName");
         ((BeanTwo) getData().get(position)).setName(name);
-        notifyDataSetChanged();
+        ((BeanTwo) getData().get(position)).setValuation(Double.parseDouble(valuation));
+        notifyItemChanged(position);
     }
 
 }
