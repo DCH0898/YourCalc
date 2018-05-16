@@ -155,10 +155,10 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
                 beanTwo.setBzdm("001593");
             } else if (i == 3) {
                 beanTwo.setTitle("沪深300");
-                beanTwo.setBzdm("000961");
+                beanTwo.setBzdm("005918");
             } else if (i == 4) {
                 beanTwo.setTitle("中证500");
-                beanTwo.setBzdm("002907");
+                beanTwo.setBzdm("005919");
             }
             beanTwo.setNotice("");
             beanTwo.setProfit(0);
@@ -237,4 +237,19 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
     public void finish() {
         moveTaskToBack(false);
     }
+
+
+    private void test(){
+        String exp = "";
+        char[] expi = exp.toCharArray();
+        int i = 0,j=0;
+        char ch;
+        while ((i<expi.length)){
+            ch = expi[i];
+            if (ch == '('){
+
+            }
+        }
+    }
+
 }
