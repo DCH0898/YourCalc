@@ -258,6 +258,34 @@ public class FunUtil {
             e.printStackTrace();
             return "";
         }
-
     }
+    /**
+     * 获取两段日期中间的所有日期
+     *
+     * @param dBegin 开始时间
+     * @param dEnd   结束时间
+     * @return 日期列表
+     */
+    public static List<Date> getDatesByBeginEnd(Date dBegin, Date dEnd) {
+        if (dBegin == null || dEnd == null) {
+            return null;
+        }
+        List<Date> lDate = new ArrayList();
+        lDate.add(dBegin);
+        java.util.Calendar calBegin = java.util.Calendar.getInstance();
+        // 使用给定的 Date 设置此 Calendar 的时间
+        calBegin.setTime(dBegin);
+        java.util.Calendar calEnd = java.util.Calendar.getInstance();
+        // 使用给定的 Date 设置此 Calendar 的时间
+        calEnd.setTime(dEnd);
+        // 测试此日期是否在指定日期之后
+        while (dEnd.after(calBegin.getTime())) {
+            // 根据日历的规则，为给定的日历字段添加或减去指定的时间量
+            calBegin.add(java.util.Calendar.DAY_OF_MONTH, 1);
+            lDate.add(calBegin.getTime());
+        }
+        return lDate;
+    }
+
+	
 }
